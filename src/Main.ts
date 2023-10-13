@@ -1,10 +1,10 @@
 /**
  * game的主脚本
  */
-import Box = Laya.Box;
 import Event = Laya.Event;
 import Sprite = Laya.Sprite;
 import Stage = Laya.Stage;
+import Dialog = Laya.Dialog;
 
 const {regClass, property} = Laya;
 
@@ -28,7 +28,7 @@ export class Main extends Laya.Script {
 	 */
 	@property({type: Laya.Prefab})
 	private monster: Laya.Prefab;
-	
+	/** 开始时间 **/
 	private startTime: number = 0;
 	/** 飞机每隔 2000ms 发射一颗子弹 */
 	private createBulletInterval: number = 1000;
@@ -40,6 +40,8 @@ export class Main extends Laya.Script {
 	private _y: number = 0;
 	/**是否停止每帧更新 */
 	private updateStop: boolean = false;
+	/** 是否已经开始游戏 */
+	private _started: boolean = false;
 	
 	constructor() {
 		super()
@@ -63,8 +65,7 @@ export class Main extends Laya.Script {
 		Laya.stage.screenMode = Stage.SCREEN_VERTICAL;
 		Laya.stage.designWidth = Laya.stage.width;
 		Laya.stage.designHeight = Laya.stage.height;
-		Laya.stage.on(Event.RESIZE, this, ()=>{
-			console.log(Laya.stage, '9999999999999999999999999999999999999999999')
+		Laya.stage.on(Event.RESIZE, this, () => {
 			Laya.stage.designWidth = Laya.stage.width;
 			Laya.stage.designHeight = Laya.stage.height;
 		})
@@ -85,24 +86,18 @@ export class Main extends Laya.Script {
 				this.updateStop = false
 			});
 		})
-		
-		// todo 临时画一下主舞台宽高
-		// let sp: Sprite = new Sprite()
-		// sp.graphics.drawRect(0, 0, Laya.stage.designWidth, Laya.stage.designHeight, "#ddd", 3);
-		// this.owner.addChild(sp)
 	}
 	
 	/**
 	 * 代码动态设置主舞台属性
 	 * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接增加一个 子节点图片解决
 	 */
-	handleStageSetting(): void{
-		let sp2:Sprite = new Sprite();
-		sp2.loadImage( "resources/apes/background.png");
+	handleStageSetting(): void {
+		let sp2: Sprite = new Sprite();
+		sp2.loadImage("resources/apes/background.png");
 		sp2.width = Laya.stage.width;
 		sp2.height = Laya.stage.height;
-		Laya.stage.on(Event.RESIZE, this, ()=>{
-			console.log(Laya.stage, '9999999999999999999999999999999999999999999')
+		Laya.stage.on(Event.RESIZE, this, () => {
 			sp2.width = Laya.stage.width;
 			sp2.height = Laya.stage.height;
 		})
@@ -114,14 +109,14 @@ export class Main extends Laya.Script {
 	 * @private
 	 */
 	private createAirplane(): void {
-		let airplane: Laya.Sprite = Laya.Pool.getItemByCreateFun("Airplane", this.airplane.create, this.airplane);
+		let airplane: Laya.Sprite = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
+		let airplaneBody = airplane.addComponent(Laya.RigidBody);
+		airplaneBody.gravityScale = 0;
+		airplane.addComponent(Laya.BoxCollider);
 		/** 飞机初始位置在舞台底部中间 */
 		airplane.pos((Laya.stage.designWidth - airplane.width) / 2, Laya.stage.designHeight - airplane.height - 100);
 		this._x = (Laya.stage.designWidth - airplane.width) / 2;
 		this._y = Laya.stage.designHeight - airplane.height - 100;
-		/** 飞机绑定鼠标/键盘事件，一般游戏以键盘为主 */
-		// airplane.on(Event.MOUSE_MOVE, this, (e: Event) => this.onAirplaneClick(e, airplane))
-		// airplane.on(Event.MOUSE_MOVE, this, this.onAirplaneMove)
 		// todo 暂时没设置游戏盒子区域，直接用父类 owner 代替，后面搞一个游戏盒子区域
 		this.owner.addChild(airplane)
 		Laya.stage.on(Event.KEY_DOWN, this, (e: Event) => this.onAirplaneStartMove(e, airplane));
@@ -132,7 +127,7 @@ export class Main extends Laya.Script {
 	 * @private
 	 */
 	private createBullet(): void {
-		let bullet: Laya.Sprite = Laya.Pool.getItemByCreateFun("Bullet", this.bullet.create, this.bullet);
+		let bullet: Laya.Sprite = Laya.Pool.getItemByCreateFun("bullet", this.bullet.create, this.bullet);
 		let bulletBody = bullet.addComponent(Laya.RigidBody);
 		bulletBody.gravityScale = 0;
 		bullet.addComponent(Laya.BoxCollider);
@@ -145,7 +140,7 @@ export class Main extends Laya.Script {
 	 * 创建怪物
 	 */
 	private createMonster(): void {
-		let monster: Laya.Sprite = Laya.Pool.getItemByCreateFun("Monster", this.monster.create, this.monster);
+		let monster: Laya.Sprite = Laya.Pool.getItemByCreateFun("monster", this.monster.create, this.monster);
 		let monsterBody = monster.addComponent(Laya.RigidBody);
 		monster.addComponent(Laya.BoxCollider);
 		monster.pos(Math.random() * (Laya.stage.designWidth - 100), -100);
@@ -195,7 +190,7 @@ export class Main extends Laya.Script {
 	 * 游戏开始
 	 */
 	onStart() {
-		console.log("Game start");
+		this._started = true;
 		/** 创建玩家飞机 */
 		this.createAirplane();
 	}
@@ -203,7 +198,9 @@ export class Main extends Laya.Script {
 	/**
 	 * 游戏结束
 	 */
-	private stopGame(): void{
-	
+	private stopGame(): void {
+		this._started = false;
+		let dialog: Dialog = new Dialog();
+		dialog.show();
 	}
 }

@@ -17,10 +17,12 @@
   var Event = Laya.Event;
   var Sprite = Laya.Sprite;
   var Stage = Laya.Stage;
+  var Dialog = Laya.Dialog;
   var { regClass, property } = Laya;
   var Main = class extends Laya.Script {
     constructor() {
       super();
+      /** 开始时间 **/
       this.startTime = 0;
       /** 飞机每隔 2000ms 发射一颗子弹 */
       this.createBulletInterval = 1e3;
@@ -32,6 +34,8 @@
       this._y = 0;
       /**是否停止每帧更新 */
       this.updateStop = false;
+      /** 是否已经开始游戏 */
+      this._started = false;
     }
     onAwake() {
       this.handleAdaptive();
@@ -47,7 +51,6 @@
       Laya.stage.designWidth = Laya.stage.width;
       Laya.stage.designHeight = Laya.stage.height;
       Laya.stage.on(Event.RESIZE, this, () => {
-        console.log(Laya.stage, "9999999999999999999999999999999999999999999");
         Laya.stage.designWidth = Laya.stage.width;
         Laya.stage.designHeight = Laya.stage.height;
       });
@@ -76,7 +79,6 @@
       sp2.width = Laya.stage.width;
       sp2.height = Laya.stage.height;
       Laya.stage.on(Event.RESIZE, this, () => {
-        console.log(Laya.stage, "9999999999999999999999999999999999999999999");
         sp2.width = Laya.stage.width;
         sp2.height = Laya.stage.height;
       });
@@ -87,7 +89,10 @@
      * @private
      */
     createAirplane() {
-      let airplane = Laya.Pool.getItemByCreateFun("Airplane", this.airplane.create, this.airplane);
+      let airplane = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
+      let airplaneBody = airplane.addComponent(Laya.RigidBody);
+      airplaneBody.gravityScale = 0;
+      airplane.addComponent(Laya.BoxCollider);
       airplane.pos((Laya.stage.designWidth - airplane.width) / 2, Laya.stage.designHeight - airplane.height - 100);
       this._x = (Laya.stage.designWidth - airplane.width) / 2;
       this._y = Laya.stage.designHeight - airplane.height - 100;
@@ -99,7 +104,7 @@
      * @private
      */
     createBullet() {
-      let bullet = Laya.Pool.getItemByCreateFun("Bullet", this.bullet.create, this.bullet);
+      let bullet = Laya.Pool.getItemByCreateFun("bullet", this.bullet.create, this.bullet);
       let bulletBody = bullet.addComponent(Laya.RigidBody);
       bulletBody.gravityScale = 0;
       bullet.addComponent(Laya.BoxCollider);
@@ -110,7 +115,7 @@
      * 创建怪物
      */
     createMonster() {
-      let monster = Laya.Pool.getItemByCreateFun("Monster", this.monster.create, this.monster);
+      let monster = Laya.Pool.getItemByCreateFun("monster", this.monster.create, this.monster);
       let monsterBody = monster.addComponent(Laya.RigidBody);
       monster.addComponent(Laya.BoxCollider);
       monster.pos(Math.random() * (Laya.stage.designWidth - 100), -100);
@@ -154,13 +159,16 @@
      * 游戏开始
      */
     onStart() {
-      console.log("Game start");
+      this._started = true;
       this.createAirplane();
     }
     /**
      * 游戏结束
      */
     stopGame() {
+      this._started = false;
+      let dialog = new Dialog();
+      dialog.show();
     }
   };
   __name(Main, "Main");
@@ -184,25 +192,9 @@
       super();
     }
     onEnable() {
-      this._rig = this.owner.getComponent(Laya.RigidBody);
+      let bc = this.owner.getComponent(Laya.BoxCollider);
+      bc.label = "airplane";
     }
-    //组件被激活后执行，此时所有节点和组件均已创建完毕，此方法只执行一次
-    //onAwake(): void {}
-    //组件被启用后执行，例如节点被添加到舞台后
-    //onEnable(): void {}
-    //组件被禁用时执行，例如从节点从舞台移除后
-    //onDisable(): void {}
-    //第一次执行update之前执行，只会执行一次
-    //onStart(): void {}
-    //手动调用节点销毁时执行
-    //onDestroy(): void {}
-    //每帧更新时执行，尽量不要在这里写大循环逻辑或者使用getComponent方法
-    onUpdate() {
-    }
-    //每帧更新时执行，在update之后执行，尽量不要在这里写大循环逻辑或者使用getComponent方法
-    //onLateUpdate(): void {}
-    //鼠标点击后执行。与交互相关的还有onMouseDown等十多个函数，具体请参阅文档。
-    //onMouseClick(): void {}
   };
   __name(AirPlane, "AirPlane");
   AirPlane = __decorateClass([
@@ -217,6 +209,8 @@
     }
     onEnable() {
       let rig = this.owner.getComponent(Laya.RigidBody);
+      let bc = this.owner.getComponent(Laya.BoxCollider);
+      bc.label = "bullet";
       rig.setVelocity({ x: 0, y: -10 });
     }
     /**
@@ -226,9 +220,8 @@
      * @param contact
      */
     onTriggerEnter(other, self, contact) {
-      console.log(other, "=================", other.label);
       let owner = this.owner;
-      if (self.label === "BoxCollider") {
+      if (other.label === "monster") {
         owner.removeSelf();
       }
     }
@@ -239,13 +232,16 @@
   ], Bullet);
 
   // src/prefab/Monster.ts
+  var Dialog2 = Laya.Dialog;
+  var Text = Laya.Text;
   var { regClass: regClass4, property: property4 } = Laya;
   var Monster = class extends Laya.Script {
     constructor() {
       super();
     }
     onEnable() {
-      let rig = this.owner.getComponent(Laya.RigidBody);
+      let bc = this.owner.getComponent(Laya.BoxCollider);
+      bc.label = "monster";
     }
     /**
      * 敌机碰撞检测（被子弹击中/撞到了玩家飞机）
@@ -254,28 +250,29 @@
      * @param contact
      */
     onTriggerEnter(other, self, contact) {
-      console.log(other, "=================", other.label);
       let owner = this.owner;
-      if (self.label === "BoxCollider") {
+      if (other.label === "bullet") {
         owner.removeSelf();
+      } else if (other.label === "airplane") {
+        this.createFailedBox();
       }
     }
-    //组件被激活后执行，此时所有节点和组件均已创建完毕，此方法只执行一次
-    //onAwake(): void {}
-    //组件被启用后执行，例如节点被添加到舞台后
-    //onEnable(): void {}
-    //组件被禁用时执行，例如从节点从舞台移除后
-    //onDisable(): void {}
-    //第一次执行update之前执行，只会执行一次
-    //onStart(): void {}
-    //手动调用节点销毁时执行
-    //onDestroy(): void {}
-    //每帧更新时执行，尽量不要在这里写大循环逻辑或者使用getComponent方法
-    //onUpdate(): void {}
-    //每帧更新时执行，在update之后执行，尽量不要在这里写大循环逻辑或者使用getComponent方法
-    //onLateUpdate(): void {}
-    //鼠标点击后执行。与交互相关的还有onMouseDown等十多个函数，具体请参阅文档。
-    //onMouseClick(): void {}
+    /**
+     * 游戏失败UI绘制
+     * @private
+     */
+    createFailedBox() {
+      let txt = new Text();
+      txt.align = "center";
+      txt.text = "\u6E38\u620F\u5931\u8D25";
+      txt.font = "Microsoft YaHei";
+      txt.fontSize = 40;
+      txt.color = "#333";
+      txt.bold = true;
+      let dialog = new Dialog2();
+      dialog.addChild(txt);
+      dialog.show();
+    }
   };
   __name(Monster, "Monster");
   Monster = __decorateClass([

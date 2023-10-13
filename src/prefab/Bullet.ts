@@ -9,7 +9,11 @@ export class Bullet extends Laya.Script {
 	
 	onEnable(): void {
 		let rig: Laya.RigidBody = this.owner.getComponent(Laya.RigidBody);
-		rig.setVelocity({ x: 0, y: -10 });
+		let bc: Laya.BoxCollider = this.owner.getComponent(Laya.BoxCollider);
+		// 为碰撞体打标签（标识符，代表子弹），重要
+		bc.label = "bullet";
+		// 子弹行径属性
+		rig.setVelocity({x: 0, y: -10});
 	}
 	
 	/**
@@ -19,9 +23,8 @@ export class Bullet extends Laya.Script {
 	 * @param contact
 	 */
 	onTriggerEnter(other: any, self: any, contact: any): void {
-		console.log(other, '=================', other.label)
 		let owner: Laya.Sprite = this.owner as Laya.Sprite;
-		if (self.label === "BoxCollider") {
+		if (other.label === "monster") {
 			owner.removeSelf();
 		}
 	}
