@@ -163,11 +163,20 @@
       this._started = true;
       this.createAirplane();
     }
+    /**开始游戏，通过激活本脚本方式开始游戏*/
+    startGame() {
+      if (!this._started) {
+        this._started = true;
+        this.enabled = true;
+        this.createAirplane();
+      }
+    }
     /**
      * 游戏结束
      */
     stopGame() {
       this._started = false;
+      this.enabled = false;
       this.owner.removeChildren();
       this.createFailedBox();
     }
@@ -178,11 +187,12 @@
     createFailedBox() {
       let txt = new Text();
       txt.align = "center";
-      txt.text = "\u6E38\u620F\u5931\u8D25";
+      txt.text = "\u6E38\u620F\u5931\u8D25,\u70B9\u51FB\u6587\u5B57\u91CD\u65B0\u5F00\u59CB";
       txt.font = "Microsoft YaHei";
       txt.fontSize = 40;
       txt.color = "#333";
       txt.bold = true;
+      txt.on(Event.CLICK, this, this.startGame);
       let dialog = new Dialog();
       dialog.addChild(txt);
       dialog.show();

@@ -6,6 +6,7 @@ import Sprite = Laya.Sprite;
 import Stage = Laya.Stage;
 import Dialog = Laya.Dialog;
 import Text = Laya.Text;
+import Image = Laya.Image;
 
 const {regClass, property} = Laya;
 
@@ -192,8 +193,16 @@ export default class Main extends Laya.Script {
 	 */
 	onStart() {
 		this._started = true;
-		/** 创建玩家飞机 */
 		this.createAirplane();
+	}
+	
+	/**开始游戏，通过激活本脚本方式开始游戏*/
+	startGame(): void {
+		if (!this._started) {
+			this._started = true;
+			this.enabled = true;
+			this.createAirplane();
+		}
 	}
 	
 	/**
@@ -201,6 +210,7 @@ export default class Main extends Laya.Script {
 	 */
 	stopGame(): void {
 		this._started = false;
+		this.enabled = false;
 		this.owner.removeChildren();
 		this.createFailedBox();
 	}
@@ -212,11 +222,12 @@ export default class Main extends Laya.Script {
 	private createFailedBox(): void{
 		let txt: Text = new Text();
 		txt.align = "center";
-		txt.text = "游戏失败";
+		txt.text = "游戏失败,点击文字重新开始";
 		txt.font = "Microsoft YaHei";
 		txt.fontSize = 40;
 		txt.color = "#333";
 		txt.bold = true;
+		txt.on(Event.CLICK, this, this.startGame)
 		let dialog:Dialog = new Dialog()
 		dialog.addChild(txt);
 		dialog.show()
