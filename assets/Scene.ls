@@ -1,6 +1,7 @@
 {
   "_$ver": 1,
   "_$id": "lx8mwule",
+  "_$runtime": "res://8bca78a9-ac7a-4c39-b9b5-9953e531c4e6",
   "_$type": "Scene",
   "left": 0,
   "right": 0,

@@ -18,6 +18,7 @@
   var Sprite = Laya.Sprite;
   var Stage = Laya.Stage;
   var Dialog = Laya.Dialog;
+  var Text = Laya.Text;
   var { regClass, property } = Laya;
   var Main = class extends Laya.Script {
     constructor() {
@@ -129,7 +130,7 @@
         return;
       }
       let now = Date.now();
-      if (now - this.startTime > this.createBulletInterval) {
+      if (now - this.startTime > this.createBulletInterval && this._started) {
         this.startTime = now;
         this.createBullet();
         this.createMonster();
@@ -167,7 +168,23 @@
      */
     stopGame() {
       this._started = false;
+      this.owner.removeChildren();
+      this.createFailedBox();
+    }
+    /**
+     * 游戏失败UI绘制
+     * @private
+     */
+    createFailedBox() {
+      let txt = new Text();
+      txt.align = "center";
+      txt.text = "\u6E38\u620F\u5931\u8D25";
+      txt.font = "Microsoft YaHei";
+      txt.fontSize = 40;
+      txt.color = "#333";
+      txt.bold = true;
       let dialog = new Dialog();
+      dialog.addChild(txt);
       dialog.show();
     }
   };
@@ -231,10 +248,27 @@
     regClass3("644b6109-3923-4e68-ad07-091ffea940fe", "../src/prefab/Bullet.ts")
   ], Bullet);
 
-  // src/prefab/Monster.ts
-  var Dialog2 = Laya.Dialog;
-  var Text = Laya.Text;
+  // src/MainRT.ts
   var { regClass: regClass4, property: property4 } = Laya;
+  var MainRT = class extends Laya.Scene {
+    constructor() {
+      super();
+      MainRT.instance = this;
+    }
+    onEnable() {
+      this._control = this.getComponent(Main);
+    }
+    stopGame() {
+      this._control.stopGame();
+    }
+  };
+  __name(MainRT, "MainRT");
+  MainRT = __decorateClass([
+    regClass4("8bca78a9-ac7a-4c39-b9b5-9953e531c4e6", "../src/MainRT.ts")
+  ], MainRT);
+
+  // src/prefab/Monster.ts
+  var { regClass: regClass5, property: property5 } = Laya;
   var Monster = class extends Laya.Script {
     constructor() {
       super();
@@ -254,29 +288,13 @@
       if (other.label === "bullet") {
         owner.removeSelf();
       } else if (other.label === "airplane") {
-        this.createFailedBox();
+        MainRT.instance.stopGame();
       }
-    }
-    /**
-     * 游戏失败UI绘制
-     * @private
-     */
-    createFailedBox() {
-      let txt = new Text();
-      txt.align = "center";
-      txt.text = "\u6E38\u620F\u5931\u8D25";
-      txt.font = "Microsoft YaHei";
-      txt.fontSize = 40;
-      txt.color = "#333";
-      txt.bold = true;
-      let dialog = new Dialog2();
-      dialog.addChild(txt);
-      dialog.show();
     }
   };
   __name(Monster, "Monster");
   Monster = __decorateClass([
-    regClass4("3148595d-541e-4a00-86da-17d470ad40bc", "../src/prefab/Monster.ts")
+    regClass5("3148595d-541e-4a00-86da-17d470ad40bc", "../src/prefab/Monster.ts")
   ], Monster);
 })();
 //# sourceMappingURL=bundle.js.map
