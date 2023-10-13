@@ -166,6 +166,8 @@
     /**开始游戏，通过激活本脚本方式开始游戏*/
     startGame() {
       if (!this._started) {
+        this._dig.close();
+        this._dig.removeSelf();
         this._started = true;
         this.enabled = true;
         this.createAirplane();
@@ -177,7 +179,6 @@
     stopGame() {
       this._started = false;
       this.enabled = false;
-      this.owner.removeChildren();
       this.createFailedBox();
     }
     /**
@@ -193,9 +194,9 @@
       txt.color = "#333";
       txt.bold = true;
       txt.on(Event.CLICK, this, this.startGame);
-      let dialog = new Dialog();
-      dialog.addChild(txt);
-      dialog.show();
+      this._dig = new Dialog();
+      this._dig.addChild(txt);
+      this._dig.show(true);
     }
   };
   __name(Main, "Main");

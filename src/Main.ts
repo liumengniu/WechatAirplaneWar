@@ -44,6 +44,8 @@ export default class Main extends Laya.Script {
 	private updateStop: boolean = false;
 	/** 是否已经开始游戏 */
 	private _started: boolean = false;
+	/** 失败提示框 **/
+	private _dig: Dialog;
 	
 	constructor() {
 		super()
@@ -199,6 +201,8 @@ export default class Main extends Laya.Script {
 	/**开始游戏，通过激活本脚本方式开始游戏*/
 	startGame(): void {
 		if (!this._started) {
+			this._dig.close();
+			this._dig.removeSelf()
 			this._started = true;
 			this.enabled = true;
 			this.createAirplane();
@@ -211,7 +215,6 @@ export default class Main extends Laya.Script {
 	stopGame(): void {
 		this._started = false;
 		this.enabled = false;
-		this.owner.removeChildren();
 		this.createFailedBox();
 	}
 	
@@ -219,7 +222,7 @@ export default class Main extends Laya.Script {
 	 * 游戏失败UI绘制
 	 * @private
 	 */
-	private createFailedBox(): void{
+	private createFailedBox(): void {
 		let txt: Text = new Text();
 		txt.align = "center";
 		txt.text = "游戏失败,点击文字重新开始";
@@ -228,8 +231,8 @@ export default class Main extends Laya.Script {
 		txt.color = "#333";
 		txt.bold = true;
 		txt.on(Event.CLICK, this, this.startGame)
-		let dialog:Dialog = new Dialog()
-		dialog.addChild(txt);
-		dialog.show()
+		this._dig = new Dialog()
+		this._dig.addChild(txt);
+		this._dig.show(true);
 	}
 }
