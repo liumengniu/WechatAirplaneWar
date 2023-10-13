@@ -59,15 +59,15 @@ export class Main extends Laya.Script {
 	 * @private
 	 */
 	private handleAdaptive(): void {
-		// Laya.stage.background =
 		console.log(Laya.stage, '====================================')
 		Laya.stage.screenMode = Stage.SCREEN_VERTICAL;
 		Laya.stage.designWidth = Laya.stage.width;
 		Laya.stage.designHeight = Laya.stage.height;
-		window.onresize = function () {
+		Laya.stage.on(Event.RESIZE, this, ()=>{
+			console.log(Laya.stage, '9999999999999999999999999999999999999999999')
 			Laya.stage.designWidth = Laya.stage.width;
 			Laya.stage.designHeight = Laya.stage.height;
-		}
+		})
 	}
 	
 	onEnable(): void {
@@ -101,6 +101,11 @@ export class Main extends Laya.Script {
 		sp2.loadImage( "resources/apes/background.png");
 		sp2.width = Laya.stage.width;
 		sp2.height = Laya.stage.height;
+		Laya.stage.on(Event.RESIZE, this, ()=>{
+			console.log(Laya.stage, '9999999999999999999999999999999999999999999')
+			sp2.width = Laya.stage.width;
+			sp2.height = Laya.stage.height;
+		})
 		this.owner.addChild(sp2)
 	}
 	
