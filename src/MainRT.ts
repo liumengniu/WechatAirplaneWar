@@ -20,7 +20,6 @@ export default class MainRT extends Laya.Scene {
 		this._control = this.getComponent(GameControl);
 	}
 	
-	
 	stopGame(): void {
 		this._control.stopGame();
 	}
