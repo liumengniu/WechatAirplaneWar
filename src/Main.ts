@@ -5,11 +5,12 @@ import Event = Laya.Event;
 import Sprite = Laya.Sprite;
 import Stage = Laya.Stage;
 import Dialog = Laya.Dialog;
+import Text = Laya.Text;
 
 const {regClass, property} = Laya;
 
 @regClass()
-export class Main extends Laya.Script {
+export default class Main extends Laya.Script {
 	/**
 	 * 玩家飞机预制体
 	 * @private
@@ -60,7 +61,7 @@ export class Main extends Laya.Script {
 	 * 屏幕自适应
 	 * @private
 	 */
-	private handleAdaptive(): void {
+	handleAdaptive(): void {
 		console.log(Laya.stage, '====================================')
 		Laya.stage.screenMode = Stage.SCREEN_VERTICAL;
 		Laya.stage.designWidth = Laya.stage.width;
@@ -108,7 +109,7 @@ export class Main extends Laya.Script {
 	 * 从对象池创建飞机
 	 * @private
 	 */
-	private createAirplane(): void {
+	createAirplane(): void {
 		let airplane: Laya.Sprite = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
 		let airplaneBody = airplane.addComponent(Laya.RigidBody);
 		airplaneBody.gravityScale = 0;
@@ -126,7 +127,7 @@ export class Main extends Laya.Script {
 	 * 从对象池创建飞机的子弹
 	 * @private
 	 */
-	private createBullet(): void {
+	createBullet(): void {
 		let bullet: Laya.Sprite = Laya.Pool.getItemByCreateFun("bullet", this.bullet.create, this.bullet);
 		let bulletBody = bullet.addComponent(Laya.RigidBody);
 		bulletBody.gravityScale = 0;
@@ -139,7 +140,7 @@ export class Main extends Laya.Script {
 	/**
 	 * 创建怪物
 	 */
-	private createMonster(): void {
+	createMonster(): void {
 		let monster: Laya.Sprite = Laya.Pool.getItemByCreateFun("monster", this.monster.create, this.monster);
 		let monsterBody = monster.addComponent(Laya.RigidBody);
 		monster.addComponent(Laya.BoxCollider);
@@ -156,7 +157,7 @@ export class Main extends Laya.Script {
 			return;
 		}
 		let now = Date.now();
-		if (now - this.startTime > this.createBulletInterval) {
+		if (now - this.startTime > this.createBulletInterval && this._started) {
 			this.startTime = now;
 			/** 创建子弹 **/
 			this.createBullet();
@@ -169,7 +170,7 @@ export class Main extends Laya.Script {
 	 * 拖动飞机（鼠标）
 	 * @private
 	 */
-	private onAirplaneStartMove(e: any = null, airplane: Laya.Sprite = null): void {
+	onAirplaneStartMove(e: any = null, airplane: Laya.Sprite = null): void {
 		switch (e.keyCode) {
 			case 87:   //W 键
 				this._y = airplane.y = airplane.y > 20 ? airplane.y - 20 : airplane.y;
@@ -198,9 +199,26 @@ export class Main extends Laya.Script {
 	/**
 	 * 游戏结束
 	 */
-	private stopGame(): void {
+	stopGame(): void {
 		this._started = false;
-		let dialog: Dialog = new Dialog();
-		dialog.show();
+		this.owner.removeChildren();
+		this.createFailedBox();
+	}
+	
+	/**
+	 * 游戏失败UI绘制
+	 * @private
+	 */
+	private createFailedBox(): void{
+		let txt: Text = new Text();
+		txt.align = "center";
+		txt.text = "游戏失败";
+		txt.font = "Microsoft YaHei";
+		txt.fontSize = 40;
+		txt.color = "#333";
+		txt.bold = true;
+		let dialog:Dialog = new Dialog()
+		dialog.addChild(txt);
+		dialog.show()
 	}
 }
