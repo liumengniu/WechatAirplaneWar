@@ -1,0 +1,26 @@
+{
+  "_$ver": 1,
+  "_$id": "ybkktnix32",
+  "_$type": "Box",
+  "name": "Box",
+  "width": 102,
+  "height": 126,
+  "_$comp": [
+    {
+      "_$type": "6bc25d4e-1457-4c39-9544-c51854163628",
+      "scriptPath": "../src/prefab/AirPlane.ts"
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "8hfzrj9b",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 102,
+      "height": 126,
+      "skin": "res://cc52286c-9c89-4c5c-8874-3688e503e96b",
+      "useSourceSize": true,
+      "color": "#ffffff"
+    }
+  ]
+}

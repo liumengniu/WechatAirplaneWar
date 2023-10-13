@@ -1,0 +1,26 @@
+{
+  "_$ver": 1,
+  "_$id": "gx34d2ace8",
+  "_$type": "Box",
+  "name": "Box",
+  "width": 57,
+  "height": 43,
+  "_$comp": [
+    {
+      "_$type": "3148595d-541e-4a00-86da-17d470ad40bc",
+      "scriptPath": "../src/prefab/Monster.ts"
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "uo7ol5z8",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 57,
+      "height": 43,
+      "skin": "res://ed9a4555-a02b-42bd-8865-46704f1dcbaa",
+      "useSourceSize": true,
+      "color": "#dddddd"
+    }
+  ]
+}

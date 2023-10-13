@@ -1,0 +1,26 @@
+{
+  "_$ver": 1,
+  "_$id": "rdxkd5432r",
+  "_$type": "Box",
+  "name": "Box",
+  "width": 5,
+  "height": 11,
+  "_$comp": [
+    {
+      "_$type": "644b6109-3923-4e68-ad07-091ffea940fe",
+      "scriptPath": "../src/prefab/Bullet.ts"
+    }
+  ],
+  "_$child": [
+    {
+      "_$id": "kwzjww4v",
+      "_$type": "Image",
+      "name": "Image",
+      "width": 5,
+      "height": 11,
+      "skin": "res://bcc335c3-d216-47ea-98a2-dea49553fac9",
+      "useSourceSize": true,
+      "color": "#ffffff"
+    }
+  ]
+}

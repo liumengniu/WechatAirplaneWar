@@ -1,0 +1,25 @@
+{
+  "resolution": {
+    "designWidth": 750,
+    "designHeight": 1334,
+    "scaleMode": "fixedauto",
+    "screenMode": "vertical"
+  },
+  "3D": {
+    "lightClusterCount": {
+      "x": 12,
+      "y": 12,
+      "z": 12
+    }
+  },
+  "modules": {
+    "laya.d3": true,
+    "laya.ui": true,
+    "laya.ani": true,
+    "laya.tiledmap": true,
+    "laya.physics": true
+  },
+  "splash": {
+    "fit": "center"
+  }
+}
