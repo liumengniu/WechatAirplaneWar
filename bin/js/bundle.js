@@ -37,6 +37,8 @@
       this.updateStop = false;
       /** 是否已经开始游戏 */
       this._started = false;
+      /** 失败提示框 **/
+      this._dig = null;
     }
     onAwake() {
       this.handleAdaptive();
@@ -166,10 +168,11 @@
     /**开始游戏，通过激活本脚本方式开始游戏*/
     startGame() {
       if (!this._started) {
-        this._dig.close();
-        this._dig.removeSelf();
+        this._dig.destroy();
+        this._dig = null;
         this._started = true;
         this.enabled = true;
+        this.handleStageSetting();
         this.createAirplane();
       }
     }
@@ -180,6 +183,7 @@
       this._started = false;
       this.enabled = false;
       this.createFailedBox();
+      this.owner.removeChildren();
     }
     /**
      * 游戏失败UI绘制
@@ -194,9 +198,11 @@
       txt.color = "#333";
       txt.bold = true;
       txt.on(Event.CLICK, this, this.startGame);
-      this._dig = new Dialog();
-      this._dig.addChild(txt);
-      this._dig.show(true);
+      if (!this._dig) {
+        this._dig = new Dialog();
+        this._dig.addChild(txt);
+        this._dig.show(true);
+      }
     }
   };
   __name(Main, "Main");

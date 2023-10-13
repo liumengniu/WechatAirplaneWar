@@ -45,7 +45,7 @@ export default class Main extends Laya.Script {
 	/** 是否已经开始游戏 */
 	private _started: boolean = false;
 	/** 失败提示框 **/
-	private _dig: Dialog;
+	private _dig: Dialog = null;
 	
 	constructor() {
 		super()
@@ -201,10 +201,11 @@ export default class Main extends Laya.Script {
 	/**开始游戏，通过激活本脚本方式开始游戏*/
 	startGame(): void {
 		if (!this._started) {
-			this._dig.close();
-			this._dig.removeSelf()
+			this._dig.destroy();
+			this._dig = null;
 			this._started = true;
 			this.enabled = true;
+			this.handleStageSetting();
 			this.createAirplane();
 		}
 	}
@@ -216,6 +217,7 @@ export default class Main extends Laya.Script {
 		this._started = false;
 		this.enabled = false;
 		this.createFailedBox();
+		this.owner.removeChildren()
 	}
 	
 	/**
@@ -231,8 +233,10 @@ export default class Main extends Laya.Script {
 		txt.color = "#333";
 		txt.bold = true;
 		txt.on(Event.CLICK, this, this.startGame)
-		this._dig = new Dialog()
-		this._dig.addChild(txt);
-		this._dig.show(true);
+		if(!this._dig){
+			this._dig = new Dialog()
+			this._dig.addChild(txt);
+			this._dig.show(true);
+		}
 	}
 }
