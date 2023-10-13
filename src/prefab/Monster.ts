@@ -1,6 +1,3 @@
-import GameControl from  "../MainRT"
-import Dialog = Laya.Dialog;
-import Text = Laya.Text;
 import MainRT from "../MainRT";
 
 const {regClass, property} = Laya;
