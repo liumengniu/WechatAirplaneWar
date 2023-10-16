@@ -233,7 +233,7 @@ export default class Main extends Laya.Script {
 		txt.color = "#333";
 		txt.bold = true;
 		txt.on(Event.CLICK, this, this.startGame)
-		if(!this._dig){
+		if (!this._dig) {
 			this._dig = new Dialog()
 			this._dig.addChild(txt);
 			this._dig.show(true);

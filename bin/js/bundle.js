@@ -219,8 +219,27 @@
     regClass("7bad1742-6eed-4d8d-81c0-501dc5bf03d6", "../src/Main.ts")
   ], Main);
 
-  // src/prefab/AirPlane.ts
+  // src/MainRT.ts
   var { regClass: regClass2, property: property2 } = Laya;
+  var MainRT = class extends Laya.Scene {
+    constructor() {
+      super();
+      MainRT.instance = this;
+    }
+    onEnable() {
+      this._control = this.getComponent(Main);
+    }
+    stopGame() {
+      this._control.stopGame();
+    }
+  };
+  __name(MainRT, "MainRT");
+  MainRT = __decorateClass([
+    regClass2("8bca78a9-ac7a-4c39-b9b5-9953e531c4e6", "../src/MainRT.ts")
+  ], MainRT);
+
+  // src/prefab/AirPlane.ts
+  var { regClass: regClass3, property: property3 } = Laya;
   var AirPlane = class extends Laya.Script {
     constructor() {
       super();
@@ -232,11 +251,11 @@
   };
   __name(AirPlane, "AirPlane");
   AirPlane = __decorateClass([
-    regClass2("6bc25d4e-1457-4c39-9544-c51854163628", "../src/prefab/AirPlane.ts")
+    regClass3("6bc25d4e-1457-4c39-9544-c51854163628", "../src/prefab/AirPlane.ts")
   ], AirPlane);
 
   // src/prefab/Bullet.ts
-  var { regClass: regClass3, property: property3 } = Laya;
+  var { regClass: regClass4, property: property4 } = Laya;
   var Bullet = class extends Laya.Script {
     constructor() {
       super();
@@ -262,29 +281,12 @@
   };
   __name(Bullet, "Bullet");
   Bullet = __decorateClass([
-    regClass3("644b6109-3923-4e68-ad07-091ffea940fe", "../src/prefab/Bullet.ts")
+    regClass4("644b6109-3923-4e68-ad07-091ffea940fe", "../src/prefab/Bullet.ts")
   ], Bullet);
 
-  // src/MainRT.ts
-  var { regClass: regClass4, property: property4 } = Laya;
-  var MainRT = class extends Laya.Scene {
-    constructor() {
-      super();
-      MainRT.instance = this;
-    }
-    onEnable() {
-      this._control = this.getComponent(Main);
-    }
-    stopGame() {
-      this._control.stopGame();
-    }
-  };
-  __name(MainRT, "MainRT");
-  MainRT = __decorateClass([
-    regClass4("8bca78a9-ac7a-4c39-b9b5-9953e531c4e6", "../src/MainRT.ts")
-  ], MainRT);
-
   // src/prefab/Monster.ts
+  var Event2 = Laya.Event;
+  var Animation = Laya.Animation;
   var { regClass: regClass5, property: property5 } = Laya;
   var Monster = class extends Laya.Script {
     constructor() {
@@ -303,10 +305,26 @@
     onTriggerEnter(other, self, contact) {
       let owner = this.owner;
       if (other.label === "bullet") {
+        console.log(owner, "------------------------------");
+        let destroyAni = this.loadAlbumAni();
+        destroyAni.pos(owner.x, owner.y);
+        owner.parent.addChild(destroyAni);
+        destroyAni.play(0, false);
+        destroyAni.on(Event2.COMPLETE, this, () => {
+          destroyAni.destroy();
+        });
         owner.removeSelf();
       } else if (other.label === "airplane") {
         MainRT.instance.stopGame();
       }
+    }
+    /**
+     * 加载图集动画（被击中的爆炸效果）
+     */
+    loadAlbumAni() {
+      let ani = new Animation();
+      ani.loadAtlas("resources/animation/monster_one.atlas");
+      return ani;
     }
   };
   __name(Monster, "Monster");

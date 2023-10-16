@@ -1,0 +1,73 @@
+{
+  "meta": {},
+  "frames": {
+    "enemy1_down1.png": {
+      "frame": {
+        "idx": 0,
+        "x": 0,
+        "y": 0,
+        "w": 57,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 51
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "enemy1_down2.png": {
+      "frame": {
+        "idx": 0,
+        "x": 0,
+        "y": 53,
+        "w": 57,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 51
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "enemy1_down3.png": {
+      "frame": {
+        "idx": 0,
+        "x": 59,
+        "y": 0,
+        "w": 57,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 51
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "enemy1_down4.png": {
+      "frame": {
+        "idx": 0,
+        "x": 59,
+        "y": 53,
+        "w": 57,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 57,
+        "h": 51
+      },
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  }
+}

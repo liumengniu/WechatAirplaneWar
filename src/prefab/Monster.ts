@@ -1,3 +1,5 @@
+import Event = Laya.Event;
+import Animation = Laya.Animation;
 import MainRT from "../MainRT";
 
 const {regClass, property} = Laya;
@@ -22,9 +24,25 @@ export class Monster extends Laya.Script {
 	onTriggerEnter(other: any, self: any, contact: any): void {
 		let owner: Laya.Sprite = this.owner as Laya.Sprite;
 		if (other.label === "bullet") { //被子弹击中
+			let destroyAni = this.loadAlbumAni();
+			destroyAni.pos(owner.x, owner.y);
+			owner.parent.addChild(destroyAni);
+			destroyAni.play(0, false);
+			destroyAni.on(Event.COMPLETE, this, ()=>{
+				destroyAni.destroy();
+			})
 			owner.removeSelf();
 		} else if (other.label === "airplane") {  //撞到玩家飞机，游戏结束
 			MainRT.instance.stopGame()
 		}
+	}
+	
+	/**
+	 * 加载图集动画（被击中的爆炸效果）
+	 */
+	loadAlbumAni(): Animation {
+		let ani = new Animation();
+		ani.loadAtlas("resources/animation/monster_one.atlas");
+		return ani;
 	}
 }
