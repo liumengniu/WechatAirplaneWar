@@ -248,6 +248,31 @@
       let bc = this.owner.getComponent(Laya.BoxCollider);
       bc.label = "airplane";
     }
+    /**
+     * 飞机碰撞检测（敌机撞到了玩家飞机）
+     * @param other
+     * @param self
+     * @param contact
+     */
+    // onTriggerEnter(other: any, self: any, contact: any): void {
+    // 	if (other.label === "monster") { //被子弹击中
+    // 		let effect = this.loadAlbumAni();
+    // 		effect.pos(self.x, self.y);
+    // 		this?.owner?.parent?.addChild(effect);
+    // 		effect.play(0, false);
+    // 		effect.on(Event.COMPLETE, this, () => {
+    // 			effect.destroy();
+    // 		})
+    // 	}
+    // }
+    /**
+     * 加载图集动画（被击中的爆炸效果）
+     */
+    // loadAlbumAni(): Animation {
+    // 	let ani = new Animation();
+    // 	ani.loadAtlas("resources/animation/airplane.atlas");
+    // 	return ani;
+    // }
   };
   __name(AirPlane, "AirPlane");
   AirPlane = __decorateClass([
@@ -291,6 +316,8 @@
   var Monster = class extends Laya.Script {
     constructor() {
       super();
+      this.monsterAtlas = "resources/animation/monster_one.atlas";
+      this.airplaneAtlas = "resources/animation/airplane.atlas";
     }
     onEnable() {
       let bc = this.owner.getComponent(Laya.BoxCollider);
@@ -303,27 +330,34 @@
      * @param contact
      */
     onTriggerEnter(other, self, contact) {
+      var _a, _b, _c;
       let owner = this.owner;
       if (other.label === "bullet") {
-        console.log(owner, "------------------------------");
-        let destroyAni = this.loadAlbumAni();
+        let destroyAni = this.loadAlbumAni(this.monsterAtlas);
         destroyAni.pos(owner.x, owner.y);
-        owner.parent.addChild(destroyAni);
+        (_a = owner == null ? void 0 : owner.parent) == null ? void 0 : _a.addChild(destroyAni);
         destroyAni.play(0, false);
         destroyAni.on(Event2.COMPLETE, this, () => {
           destroyAni.destroy();
         });
-        owner.removeSelf();
+        owner == null ? void 0 : owner.removeSelf();
       } else if (other.label === "airplane") {
-        MainRT.instance.stopGame();
+        let destroyAni = this.loadAlbumAni(this.airplaneAtlas);
+        destroyAni.pos(other.owner.x, other.owner.y);
+        (_c = (_b = other.owner) == null ? void 0 : _b.parent) == null ? void 0 : _c.addChild(destroyAni);
+        destroyAni.play(0, false);
+        destroyAni.on(Event2.COMPLETE, this, () => {
+          destroyAni.destroy();
+          MainRT.instance.stopGame();
+        });
       }
     }
     /**
      * 加载图集动画（被击中的爆炸效果）
      */
-    loadAlbumAni() {
+    loadAlbumAni(atlas) {
       let ani = new Animation();
-      ani.loadAtlas("resources/animation/monster_one.atlas");
+      ani.loadAtlas(atlas);
       return ani;
     }
   };

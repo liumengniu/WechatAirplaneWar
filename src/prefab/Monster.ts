@@ -6,6 +6,9 @@ const {regClass, property} = Laya;
 
 @regClass()
 export class Monster extends Laya.Script {
+	private monsterAtlas:string = "resources/animation/monster_one.atlas";
+	private airplaneAtlas:string = "resources/animation/airplane.atlas";
+	
 	constructor() {
 		super()
 	}
@@ -24,25 +27,32 @@ export class Monster extends Laya.Script {
 	onTriggerEnter(other: any, self: any, contact: any): void {
 		let owner: Laya.Sprite = this.owner as Laya.Sprite;
 		if (other.label === "bullet") { //被子弹击中
-			let destroyAni = this.loadAlbumAni();
+			let destroyAni = this.loadAlbumAni(this.monsterAtlas);
 			destroyAni.pos(owner.x, owner.y);
-			owner.parent.addChild(destroyAni);
+			owner?.parent?.addChild(destroyAni);
 			destroyAni.play(0, false);
-			destroyAni.on(Event.COMPLETE, this, ()=>{
+			destroyAni.on(Event.COMPLETE, this, () => {
 				destroyAni.destroy();
 			})
-			owner.removeSelf();
+			owner?.removeSelf();
 		} else if (other.label === "airplane") {  //撞到玩家飞机，游戏结束
-			MainRT.instance.stopGame()
+			let destroyAni = this.loadAlbumAni(this.airplaneAtlas);
+			destroyAni.pos(other.owner.x, other.owner.y);
+			other.owner?.parent?.addChild(destroyAni);
+			destroyAni.play(0, false);
+			destroyAni.on(Event.COMPLETE, this, () => {
+				destroyAni.destroy();
+				MainRT.instance.stopGame();
+			})
 		}
 	}
 	
 	/**
 	 * 加载图集动画（被击中的爆炸效果）
 	 */
-	loadAlbumAni(): Animation {
+	loadAlbumAni(atlas: string): Animation {
 		let ani = new Animation();
-		ani.loadAtlas("resources/animation/monster_one.atlas");
+		ani.loadAtlas(atlas);
 		return ani;
 	}
 }
