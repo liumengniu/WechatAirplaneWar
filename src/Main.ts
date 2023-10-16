@@ -65,7 +65,6 @@ export default class Main extends Laya.Script {
 	 * @private
 	 */
 	handleAdaptive(): void {
-		console.log(Laya.stage, '====================================')
 		Laya.stage.screenMode = Stage.SCREEN_VERTICAL;
 		Laya.stage.designWidth = Laya.stage.width;
 		Laya.stage.designHeight = Laya.stage.height;
