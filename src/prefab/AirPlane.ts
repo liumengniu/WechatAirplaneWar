@@ -9,5 +9,6 @@ export class AirPlane extends Laya.Script {
 	onEnable(): void {
 		let bc: Laya.BoxCollider = this.owner.getComponent(Laya.BoxCollider);
 		bc.label = "airplane";
+		bc.isSensor = true;
 	}
 }

@@ -39,10 +39,14 @@ export class Monster extends Laya.Script {
 			let destroyAni = this.loadAlbumAni(this.airplaneAtlas);
 			destroyAni.pos(other.owner.x, other.owner.y);
 			other.owner?.parent?.addChild(destroyAni);
-			destroyAni.play(0, false);
+			destroyAni.play(0, true);
 			destroyAni.on(Event.COMPLETE, this, () => {
-				destroyAni.destroy();
-				MainRT.instance.stopGame();
+				other.owner?.removeSelf();
+				//等待60帧播放动画后，结束游戏
+				Laya.timer.frameOnce(60, this, () => {
+					destroyAni.destroy();
+					MainRT.instance.stopGame();
+				})
 			})
 		}
 	}
