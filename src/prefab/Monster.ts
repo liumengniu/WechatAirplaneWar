@@ -1,4 +1,5 @@
 import Event = Laya.Event;
+import Image = Laya.Image;
 import Animation = Laya.Animation;
 import MainRT from "../MainRT";
 
@@ -6,16 +7,23 @@ const {regClass, property} = Laya;
 
 @regClass()
 export class Monster extends Laya.Script {
-	private monsterAtlas:string = "resources/animation/monster_one.atlas";
-	private airplaneAtlas:string = "resources/animation/airplane.atlas";
+	private monsterAtlas: string = "resources/animation/monster_one.atlas";
+	private airplaneAtlas: string = "resources/animation/airplane.atlas";
+	private monster_one: string = "resources/apes/monster1.png";
+	private monster_two: string = "resources/apes/monster2.png";
 	
 	constructor() {
 		super()
 	}
 	
 	onEnable(): void {
+		let ran: number = Math.random();
 		let bc: Laya.BoxCollider = this.owner.getComponent(Laya.BoxCollider);
 		bc.label = "monster";
+		bc.width = ran > 0.5 ? 57 : 69;
+		bc.height = ran > 0.5 ? 43 : 99;
+		let img: any = this.owner.getChildByName("image");
+		img.skin = ran > 0.5 ? this.monster_one : this.monster_two;
 	}
 	
 	/**

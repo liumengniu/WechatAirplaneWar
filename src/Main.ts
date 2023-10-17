@@ -104,7 +104,7 @@ export default class Main extends Laya.Script {
 	 */
 	handleStageSetting(): void {
 		// 游戏主舞台添加背景图
-		Laya.stage.loadImage("resources/apes/background.png")
+		Laya.stage.loadImage("resources/apes/background.png");
 		// 添加计分器
 		this._scoreLb = new Label();
 		this._scoreLb.pos(120, 50);

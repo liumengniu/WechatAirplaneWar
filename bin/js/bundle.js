@@ -79,7 +79,7 @@
     }
     /**
      * 代码动态设置主舞台属性
-     * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接增加一个 子节点图片解决
+     * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接loadImage节点图片解决
      */
     handleStageSetting() {
       Laya.stage.loadImage("resources/apes/background.png");
@@ -312,10 +312,17 @@
       super();
       this.monsterAtlas = "resources/animation/monster_one.atlas";
       this.airplaneAtlas = "resources/animation/airplane.atlas";
+      this.monster_one = "resources/apes/monster1.png";
+      this.monster_two = "resources/apes/monster2.png";
     }
     onEnable() {
+      let ran = Math.random();
       let bc = this.owner.getComponent(Laya.BoxCollider);
       bc.label = "monster";
+      bc.width = ran > 0.5 ? 57 : 69;
+      bc.height = ran > 0.5 ? 43 : 99;
+      let img = this.owner.getChildByName("image");
+      img.skin = ran > 0.5 ? this.monster_one : this.monster_two;
     }
     /**
      * 敌机碰撞检测（被子弹击中/撞到了玩家飞机）
