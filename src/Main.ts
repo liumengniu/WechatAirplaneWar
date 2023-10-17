@@ -103,19 +103,10 @@ export default class Main extends Laya.Script {
 	 * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接增加一个 子节点图片解决
 	 */
 	handleStageSetting(): void {
-		let sp2: Sprite = new Sprite();
-		// 添加游戏主场景背景图
-		sp2.loadImage("resources/apes/background.png");
-		sp2.width = Laya.stage.width;
-		sp2.height = Laya.stage.height;
-		Laya.stage.on(Event.RESIZE, this, () => {
-			sp2.width = Laya.stage.width;
-			sp2.height = Laya.stage.height;
-		})
-		this.owner.addChild(sp2)
+		// 游戏主舞台添加背景图
+		Laya.stage.loadImage("resources/apes/background.png")
 		// 添加计分器
 		this._scoreLb = new Label();
-		
 		this._scoreLb.pos(120, 50);
 		this._scoreLb.font = "Gabriola";
 		this._scoreLb.fontSize = 76;

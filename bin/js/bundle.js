@@ -15,7 +15,6 @@
 
   // src/Main.ts
   var Event = Laya.Event;
-  var Sprite = Laya.Sprite;
   var Stage = Laya.Stage;
   var Dialog = Laya.Dialog;
   var Text = Laya.Text;
@@ -83,15 +82,7 @@
      * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接增加一个 子节点图片解决
      */
     handleStageSetting() {
-      let sp2 = new Sprite();
-      sp2.loadImage("resources/apes/background.png");
-      sp2.width = Laya.stage.width;
-      sp2.height = Laya.stage.height;
-      Laya.stage.on(Event.RESIZE, this, () => {
-        sp2.width = Laya.stage.width;
-        sp2.height = Laya.stage.height;
-      });
-      this.owner.addChild(sp2);
+      Laya.stage.loadImage("resources/apes/background.png");
       this._scoreLb = new Label();
       this._scoreLb.pos(120, 50);
       this._scoreLb.font = "Gabriola";
