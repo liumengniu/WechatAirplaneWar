@@ -100,7 +100,7 @@ export default class Main extends Laya.Script {
 	
 	/**
 	 * 代码动态设置主舞台属性
-	 * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接增加一个 子节点图片解决
+	 * todo 没有在IDE找到设置背景图的地方，有没有代码设置背景图的api，此处直接loadImage节点图片解决
 	 */
 	handleStageSetting(): void {
 		// 游戏主舞台添加背景图
