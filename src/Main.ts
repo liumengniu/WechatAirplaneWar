@@ -7,6 +7,7 @@ import Stage = Laya.Stage;
 import Dialog = Laya.Dialog;
 import Text = Laya.Text;
 import Image = Laya.Image;
+import Label = Laya.Label;
 
 const {regClass, property} = Laya;
 
@@ -46,11 +47,17 @@ export default class Main extends Laya.Script {
 	private _started: boolean = false;
 	/** 失败提示框 **/
 	private _dig: Dialog = null;
+	/** 游戏得分 */
+	private score: number = 1;
+	private _scoreLb: Label;
 	
 	constructor() {
 		super()
 	}
 	
+	/**
+	 * 场景启动
+	 */
 	onAwake(): void {
 		// 启动物理检测
 		// Laya.PhysicsDebugDraw.enable()
@@ -97,6 +104,7 @@ export default class Main extends Laya.Script {
 	 */
 	handleStageSetting(): void {
 		let sp2: Sprite = new Sprite();
+		// 添加游戏主场景背景图
 		sp2.loadImage("resources/apes/background.png");
 		sp2.width = Laya.stage.width;
 		sp2.height = Laya.stage.height;
@@ -105,6 +113,26 @@ export default class Main extends Laya.Script {
 			sp2.height = Laya.stage.height;
 		})
 		this.owner.addChild(sp2)
+		// 添加计分器
+		this._scoreLb = new Label();
+		
+		this._scoreLb.pos(120, 50);
+		this._scoreLb.font = "Gabriola";
+		this._scoreLb.fontSize = 76;
+		this._scoreLb.text = this.score.toString();
+		this._scoreLb.color = "#333";
+		let _scoreIcon = new Image("resources/apes/scoreLb.png");
+		_scoreIcon.pos(50, 66);
+		this.owner.addChild(_scoreIcon);
+		this.owner.addChild(this._scoreLb);
+	}
+	
+	/**
+	 * 分数增加
+	 */
+	addScore(score: number = 1): void {
+		this.score += score;
+		this._scoreLb.text = this.score.toString();
 	}
 	
 	/**
@@ -214,6 +242,7 @@ export default class Main extends Laya.Script {
 	 */
 	stopGame(): void {
 		this._started = false;
+		this.score = 0;
 		this.enabled = false;
 		this.createFailedBox();
 		this.owner.removeChildren()

@@ -35,6 +35,7 @@ export class Monster extends Laya.Script {
 				destroyAni.destroy();
 			})
 			owner?.removeSelf();
+			MainRT.instance.addScore(1)
 		} else if (other.label === "airplane") {  //撞到玩家飞机，游戏结束
 			let destroyAni = this.loadAlbumAni(this.airplaneAtlas);
 			destroyAni.pos(other.owner.x, other.owner.y);

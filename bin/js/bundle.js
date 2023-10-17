@@ -19,6 +19,8 @@
   var Stage = Laya.Stage;
   var Dialog = Laya.Dialog;
   var Text = Laya.Text;
+  var Image = Laya.Image;
+  var Label = Laya.Label;
   var { regClass, property } = Laya;
   var Main = class extends Laya.Script {
     constructor() {
@@ -39,7 +41,12 @@
       this._started = false;
       /** 失败提示框 **/
       this._dig = null;
+      /** 游戏得分 */
+      this.score = 1;
     }
+    /**
+     * 场景启动
+     */
     onAwake() {
       this.handleAdaptive();
       this.handleStageSetting();
@@ -49,7 +56,6 @@
      * @private
      */
     handleAdaptive() {
-      console.log(Laya.stage, "====================================");
       Laya.stage.screenMode = Stage.SCREEN_VERTICAL;
       Laya.stage.designWidth = Laya.stage.width;
       Laya.stage.designHeight = Laya.stage.height;
@@ -86,6 +92,23 @@
         sp2.height = Laya.stage.height;
       });
       this.owner.addChild(sp2);
+      this._scoreLb = new Label();
+      this._scoreLb.pos(120, 50);
+      this._scoreLb.font = "Gabriola";
+      this._scoreLb.fontSize = 76;
+      this._scoreLb.text = this.score.toString();
+      this._scoreLb.color = "#333";
+      let _scoreIcon = new Image("resources/apes/scoreLb.png");
+      _scoreIcon.pos(50, 66);
+      this.owner.addChild(_scoreIcon);
+      this.owner.addChild(this._scoreLb);
+    }
+    /**
+     * 分数增加
+     */
+    addScore(score = 1) {
+      this.score += score;
+      this._scoreLb.text = this.score.toString();
     }
     /**
      * 从对象池创建飞机
@@ -181,6 +204,7 @@
      */
     stopGame() {
       this._started = false;
+      this.score = 0;
       this.enabled = false;
       this.createFailedBox();
       this.owner.removeChildren();
@@ -228,6 +252,9 @@
     }
     onEnable() {
       this._control = this.getComponent(Main);
+    }
+    addScore(score) {
+      this._control.addScore(score);
     }
     stopGame() {
       this._control.stopGame();
@@ -317,6 +344,7 @@
           destroyAni.destroy();
         });
         owner == null ? void 0 : owner.removeSelf();
+        MainRT.instance.addScore(1);
       } else if (other.label === "airplane") {
         let destroyAni = this.loadAlbumAni(this.airplaneAtlas);
         destroyAni.pos(other.owner.x, other.owner.y);
