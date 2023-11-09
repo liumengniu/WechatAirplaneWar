@@ -20,4 +20,6 @@
 └── tsconfig.json          # ts配置文件
 ```
 
-## 2、开发流程
+## 2、教程演示
+![avatar](./airplane.gif)
+
