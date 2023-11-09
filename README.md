@@ -32,3 +32,8 @@
 ```
 
 ## 🔗 语雀链接
+
+## 🌟 Star History
+<br>
+
+[![Star History Chart](https://gitee.com/lmn_741/AirplaneWar/badge/star.svg?theme=white)](https://gitee.com/lmn_741/AirplaneWar/stargazers)
