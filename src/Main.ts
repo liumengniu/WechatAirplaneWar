@@ -8,6 +8,8 @@ import Dialog = Laya.Dialog;
 import Text = Laya.Text;
 import Image = Laya.Image;
 import Label = Laya.Label;
+import KeyBoardManager = Laya.InputManager;
+import Keyboard = Laya.Keyboard;
 
 const {regClass, property} = Laya;
 
@@ -31,6 +33,8 @@ export default class Main extends Laya.Script {
 	 */
 	@property({type: Laya.Prefab})
 	private monster: Laya.Prefab;
+	/** 玩家实例 **/
+	_airplane: Sprite;
 	/** 开始时间 **/
 	private startTime: number = 0;
 	/** 飞机每隔 2000ms 发射一颗子弹 */
@@ -131,7 +135,7 @@ export default class Main extends Laya.Script {
 	 * @private
 	 */
 	createAirplane(): void {
-		let airplane: Laya.Sprite = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
+		let airplane: Laya.Sprite = this._airplane = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
 		let airplaneBody = airplane.addComponent(Laya.RigidBody);
 		airplaneBody.gravityScale = 0;
 		airplane.addComponent(Laya.BoxCollider);
@@ -141,7 +145,6 @@ export default class Main extends Laya.Script {
 		this._y = Laya.stage.designHeight - airplane.height - 100;
 		// todo 暂时没设置游戏盒子区域，直接用父类 owner 代替，后面搞一个游戏盒子区域
 		this.owner.addChild(airplane)
-		Laya.stage.on(Event.KEY_DOWN, this, (e: Event) => this.onAirplaneStartMove(e, airplane));
 	}
 	
 	/**
@@ -173,6 +176,8 @@ export default class Main extends Laya.Script {
 	 * 每帧更新
 	 */
 	onUpdate(): void {
+		// 操作玩家
+		this.onAirplaneStartMove();
 		//避免由于切到后台后还在更新，而导致切出后台后，同时出现大量盒子
 		if (this.updateStop) {
 			return;
@@ -191,20 +196,15 @@ export default class Main extends Laya.Script {
 	 * 拖动飞机（鼠标）
 	 * @private
 	 */
-	onAirplaneStartMove(e: any = null, airplane: Laya.Sprite = null): void {
-		switch (e.keyCode) {
-			case 87:   //W 键
-				this._y = airplane.y = airplane.y > 20 ? airplane.y - 20 : airplane.y;
-				break;
-			case 83:   //S 键
-				this._y = airplane.y = airplane.y + airplane.height < Laya.stage.designHeight ? airplane.y + 20 : airplane.y;
-				break;
-			case 68:   //D 键
-				this._x = airplane.x = airplane.x + airplane.width < Laya.stage.designWidth ? airplane.x + 20 : airplane.x;
-				break;
-			case 65:   //A 键
-				this._x = airplane.x = airplane.x > 20 ? airplane.x - 20 : airplane.x;
-				break;
+	onAirplaneStartMove(e: any = null, airplane: Laya.Sprite = this._airplane): void {
+		if(KeyBoardManager.hasKeyDown(Keyboard.UP) || KeyBoardManager.hasKeyDown(Keyboard.W)){
+			this._y = airplane.y = airplane.y > 20 ? airplane.y - 20 : airplane.y;
+		} else if(KeyBoardManager.hasKeyDown(Keyboard.DOWN) || KeyBoardManager.hasKeyDown(Keyboard.S)){
+			this._y = airplane.y = airplane.y + airplane.height < Laya.stage.designHeight ? airplane.y + 20 : airplane.y;
+		} else if(KeyBoardManager.hasKeyDown(Keyboard.LEFT) || KeyBoardManager.hasKeyDown(Keyboard.A)){
+			this._x = airplane.x = airplane.x > 20 ? airplane.x - 20 : airplane.x;
+		} else if(KeyBoardManager.hasKeyDown(Keyboard.RIGHT) || KeyBoardManager.hasKeyDown(Keyboard.D)){
+			this._x = airplane.x = airplane.x + airplane.width < Laya.stage.designWidth ? airplane.x + 20 : airplane.x;
 		}
 	}
 	

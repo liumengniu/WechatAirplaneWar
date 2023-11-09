@@ -20,6 +20,8 @@
   var Text = Laya.Text;
   var Image = Laya.Image;
   var Label = Laya.Label;
+  var KeyBoardManager = Laya.InputManager;
+  var Keyboard = Laya.Keyboard;
   var { regClass, property } = Laya;
   var Main = class extends Laya.Script {
     constructor() {
@@ -106,7 +108,7 @@
      * @private
      */
     createAirplane() {
-      let airplane = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
+      let airplane = this._airplane = Laya.Pool.getItemByCreateFun("airplane", this.airplane.create, this.airplane);
       let airplaneBody = airplane.addComponent(Laya.RigidBody);
       airplaneBody.gravityScale = 0;
       airplane.addComponent(Laya.BoxCollider);
@@ -114,7 +116,6 @@
       this._x = (Laya.stage.designWidth - airplane.width) / 2;
       this._y = Laya.stage.designHeight - airplane.height - 100;
       this.owner.addChild(airplane);
-      Laya.stage.on(Event.KEY_DOWN, this, (e) => this.onAirplaneStartMove(e, airplane));
     }
     /**
      * 从对象池创建飞机的子弹
@@ -142,6 +143,7 @@
      * 每帧更新
      */
     onUpdate() {
+      this.onAirplaneStartMove();
       if (this.updateStop) {
         return;
       }
@@ -156,20 +158,15 @@
      * 拖动飞机（鼠标）
      * @private
      */
-    onAirplaneStartMove(e = null, airplane = null) {
-      switch (e.keyCode) {
-        case 87:
-          this._y = airplane.y = airplane.y > 20 ? airplane.y - 20 : airplane.y;
-          break;
-        case 83:
-          this._y = airplane.y = airplane.y + airplane.height < Laya.stage.designHeight ? airplane.y + 20 : airplane.y;
-          break;
-        case 68:
-          this._x = airplane.x = airplane.x + airplane.width < Laya.stage.designWidth ? airplane.x + 20 : airplane.x;
-          break;
-        case 65:
-          this._x = airplane.x = airplane.x > 20 ? airplane.x - 20 : airplane.x;
-          break;
+    onAirplaneStartMove(e = null, airplane = this._airplane) {
+      if (KeyBoardManager.hasKeyDown(Keyboard.UP) || KeyBoardManager.hasKeyDown(Keyboard.W)) {
+        this._y = airplane.y = airplane.y > 20 ? airplane.y - 20 : airplane.y;
+      } else if (KeyBoardManager.hasKeyDown(Keyboard.DOWN) || KeyBoardManager.hasKeyDown(Keyboard.S)) {
+        this._y = airplane.y = airplane.y + airplane.height < Laya.stage.designHeight ? airplane.y + 20 : airplane.y;
+      } else if (KeyBoardManager.hasKeyDown(Keyboard.LEFT) || KeyBoardManager.hasKeyDown(Keyboard.A)) {
+        this._x = airplane.x = airplane.x > 20 ? airplane.x - 20 : airplane.x;
+      } else if (KeyBoardManager.hasKeyDown(Keyboard.RIGHT) || KeyBoardManager.hasKeyDown(Keyboard.D)) {
+        this._x = airplane.x = airplane.x + airplane.width < Laya.stage.designWidth ? airplane.x + 20 : airplane.x;
       }
     }
     /**
