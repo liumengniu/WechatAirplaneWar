@@ -12,14 +12,22 @@
       "z": 12
     }
   },
+  "physics2D": {
+    "gravity": {
+      "y": 9.8
+    }
+  },
   "modules": {
     "laya.d3": true,
     "laya.ui": true,
     "laya.ani": true,
     "laya.tiledmap": true,
-    "laya.physics": true
+    "laya.physics": true,
+    "laya.physics2D": true
   },
   "splash": {
     "fit": "center"
-  }
+  },
+  "stat": true,
+  "vConsole": true
 }
